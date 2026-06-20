@@ -8,11 +8,11 @@ import Link from "next/link";
 import { LandingMark } from "./LandingMark";
 
 const LINKS = [
+  { label: "Markets", href: "#markets" },
   { label: "How it works", href: "#how" },
-  { label: "Season Pass", href: "#pass" },
-  { label: "Stack", href: "#stack" },
+  { label: "Collectibles", href: "#alpha" },
+  { label: "Auto-Strike", href: "#pass" },
   { label: "Pricing", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
 ];
 
 export function LandingNav() {
