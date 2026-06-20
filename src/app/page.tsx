@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { LandingNav } from "../components/landing/LandingNav";
 import { Reveal } from "../components/landing/Reveal";
-import { CinematicBackground } from "../components/landing/CinematicBackground";
+import { WorldCupHero } from "../components/landing/WorldCupHero";
 import { LandingMark } from "../components/landing/LandingMark";
 import { Flag } from "../components/terminal/flags";
 
@@ -14,66 +15,22 @@ export const metadata: Metadata = {
 
 /* ---------- hero data ---------- */
 
-const WINNER: { code: string; name: string; pct: number; move: "up" | "down" | "flat" }[] = [
-  { code: "ARG", name: "Argentina", pct: 24, move: "up" },
-  { code: "BRA", name: "Brazil", pct: 18, move: "up" },
-  { code: "FRA", name: "France", pct: 16, move: "down" },
-  { code: "ESP", name: "Spain", pct: 13, move: "up" },
-  { code: "ENG", name: "England", pct: 11, move: "flat" },
-  { code: "GER", name: "Germany", pct: 9, move: "down" },
-];
-
-const SETTLED = [
-  { m: "USA 4 - 1 PAR", p: "+$1.2M paid" },
-  { m: "GER 7 - 1 CUR", p: "+$2.4M paid" },
-  { m: "BRA 1 - 1 MAR", p: "+$880K paid" },
-  { m: "ARG 3 - 0 JPN", p: "+$1.6M paid" },
-  { m: "ESP 2 - 2 USA", p: "+$1.1M paid" },
-];
-
-// Tech-stack marks: clean monochrome inline SVGs (fill/stroke currentColor) so
-// they tint to any text color and load instantly. Solana = official 3-bar mark,
-// Jupiter = the real vectorized wordmark glyph, plus Phantom, Anchor, Superteam
-// (star), and a pay.sh terminal-prompt wordmark.
-const STACK = [
+// Tech-stack trust bar: actual logo assets from /public/logos rendered as
+// monochrome images (brightness(0) invert(1) filter tints them white on the
+// navy background). pay.sh has no logo file so keeps a clean inline SVG.
+const STACK: { name: string; src?: string; h: number; w: number; svg?: React.ReactNode }[] = [
+  { name: "Solana", src: "/logos/solana.png", h: 20, w: 20 },
+  { name: "Phantom", src: "/logos/phantom.png", h: 24, w: 24 },
+  { name: "Anchor", src: "/logos/anchor.png", h: 24, w: 24 },
+  { name: "Jupiter", src: "/logos/jupiter.svg", h: 24, w: 24 },
+  { name: "Superteam", src: "/logos/superteam.png", h: 22, w: 22 },
   {
-    name: "Solana", vb: "0 0 398 312", w: "h-4 w-auto", fill: true,
+    name: "pay.sh", h: 20, w: 20,
     svg: (
-      <>
-        <path d="M64.6 237.9c2.4-2.4 5.7-3.8 9.2-3.8h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1l62.7-62.7z" />
-        <path d="M64.6 3.8C67.1 1.4 70.4 0 73.8 0h317.4c5.8 0 8.7 7 4.6 11.1l-62.7 62.7c-2.4 2.4-5.7 3.8-9.2 3.8H6.5c-5.8 0-8.7-7-4.6-11.1L64.6 3.8z" />
-        <path d="M333.1 120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8 0-8.7 7-4.6 11.1l62.7 62.7c2.4 2.4 5.7 3.8 9.2 3.8h317.4c5.8 0 8.7-7 4.6-11.1l-62.7-62.7z" />
-      </>
+      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M4 6l4 4-4 4" /><path d="M11 16h7" />
+      </svg>
     ),
-  },
-  {
-    name: "Phantom", vb: "0 0 24 24", w: "h-6 w-auto", fill: true,
-    svg: <path d="M12 3C7 3 3 7 3 12v6.5c0 .9 1 1.4 1.7.8.5-.4 1.2-.4 1.7 0l1 .8c.5.4 1.2.4 1.7 0l1-.8c.5-.4 1.2-.4 1.7 0l1 .8c.5.4 1.2.4 1.7 0l1-.8c.5-.4 1.2-.4 1.7 0 .7.6 1.7.1 1.7-.8V12c0-5-4-9-9-9Zm-3 8.2a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6Zm6 0a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6Z" />,
-  },
-  {
-    name: "Anchor", vb: "0 0 24 24", w: "h-6 w-auto", fill: false,
-    svg: <><circle cx="12" cy="5" r="2.4" /><path d="M12 7.4V21" /><path d="M6 12H18" /><path d="M5 14a7 7 0 0 0 14 0" /></>,
-  },
-  {
-    name: "Jupiter", vb: "0 0 256 256", w: "h-6 w-auto", fill: true,
-    svg: (
-      <>
-        <path d="M26.1 199.6c10.6 14.7 24.1 27 39.8 36.1 15.6 9.1 33 14.8 51 16.7-9.3-13.9-22.7-26.8-39.5-36.5-16.8-9.8-34.6-15.1-51.3-16.3z" />
-        <path d="M99.9 177c-32.3-18.8-67.4-23.6-92.4-15.1 2.4 8 5.6 15.7 9.5 23.1 21.8-.5 45.6 5.4 67.7 18.3 22.1 12.8 39 30.6 49.4 49.7 8.4-.3 16.7-1.3 24.8-3.2-5-26-26.6-54-58.9-72.8z" />
-        <path d="M254.2 100.7c-4.1-16.8-11.5-32.5-21.9-46.3-10.3-13.8-23.3-25.4-38.2-34-14.9-8.7-31.4-14.2-48.5-16.4-17.1-2.1-34.5-.8-51 3.9 27.7 3.4 58.4 13.8 88.6 31.3 30.1 17.5 54.4 39.1 71 61.5z" />
-        <path d="M213.9 162c-14.2-23.5-38.5-46.1-68.4-63.5C115.6 81.2 84 71.3 56.6 70.6 32.4 70 14.3 77.1 6.9 89.9c0 .1-.1.1-.1.2-.7 2.4-1.3 4.8-1.8 7.2 10.4-4.1 22.4-6.4 35.8-6.6 29.8-.6 63.1 8.9 93.8 26.8 30.7 17.9 55.5 42.1 69.8 68.2 6.4 11.8 10.4 23.4 12 34.5 1.8-1.6 3.6-3.3 5.4-5.1 0-.1.1-.2.1-.2 7.5-12.9 4.6-32.1-7.8-52.7z" />
-        <path d="M122.8 137.8C76.9 111.1 26.3 107 2 125.5c0 5.8.5 11.6 1.3 17.4 7.2-2.2 14.6-3.5 22-4.1 27.2-2 57.2 5.6 84.4 21.4 27.2 15.8 48.7 38.1 60.4 62.8 3.2 6.7 5.7 13.8 7.4 21.1 5.4-2.1 10.7-4.6 15.8-7.4 4-30.4-24.7-72.3-70.5-98.9z" />
-        <path d="M237.5 122.6c-14.3-23.5-38.8-46.1-68.9-63.6-30.2-17.5-61.9-27.6-89.5-28.4-21-.6-37.2 4.5-45.7 14.1 35-5.9 81.2 4.1 125.9 30.1 44.8 26 76.3 61.2 88.5 94.5 4.2-12 .5-28.7-10.3-46.7z" />
-      </>
-    ),
-  },
-  {
-    name: "Superteam", vb: "0 0 24 24", w: "h-5 w-auto", fill: true,
-    svg: <path d="M12 2l2.6 6.3L21 9l-5 4.2L17.5 20 12 16.3 6.5 20 8 13.2 3 9l6.4-.7L12 2Z" />,
-  },
-  {
-    name: "pay.sh", vb: "0 0 24 24", w: "h-5 w-auto", fill: false,
-    svg: <><path d="M4 6l4 4-4 4" /><path d="M11 16h7" /></>,
   },
 ];
 
@@ -93,130 +50,14 @@ const Arrow = ({ className = "h-4 w-4" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
 );
 
-function Move({ dir }: { dir: "up" | "down" | "flat" }) {
-  if (dir === "flat") return <span className="font-mono text-[10px] text-white/40">flat</span>;
-  const up = dir === "up";
-  return (
-    <span className={"flex items-center gap-0.5 font-mono text-[10px] font-medium " + (up ? "text-green" : "text-red")}>
-      <svg className="h-2.5 w-2.5" viewBox="0 0 12 12" fill="currentColor">{up ? <path d="M6 2 10 8H2z" /> : <path d="M6 10 2 4h8z" />}</svg>
-    </span>
-  );
-}
-
 export default function Landing() {
   return (
     <div id="top" className="bg-paper font-display text-ink antialiased">
       <LandingNav />
 
-      {/* ===== HERO ===== */}
-      <header className="relative min-h-screen overflow-hidden">
-        <CinematicBackground />
-        <div className="relative z-10 mx-auto grid min-h-[calc(100vh-64px)] max-w-6xl items-center gap-12 px-6 pb-16 pt-32 lg:grid-cols-[1.05fr_0.95fr] lg:pb-20 lg:pt-36">
-          {/* left: copy */}
-          <div className="max-w-xl">
-            <div className="flex flex-wrap items-center gap-2">
-              {["Trending", "Live 6", "FIFA World Cup 2026", "Sports"].map((label, index) => (
-                <span key={label} className={"liquid-glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 font-mono text-xs " + (index === 1 ? "text-green" : "text-white/80")}>
-                  {index === 1 ? <span className="h-1.5 w-1.5 rounded-full bg-green"></span> : null}
-                  {label}
-                </span>
-              ))}
-            </div>
-            <h1 className="mt-6 text-5xl font-bold leading-[1.03] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Don&apos;t watch the Cup.
-              <br />
-              <span className="bg-gradient-to-r from-blue-400 to-blue-500 bg-clip-text text-transparent">Trade it.</span>
-            </h1>
-            <p className="mt-6 max-w-md text-lg leading-relaxed text-white/65">
-              Turn passive World Cup viewership into active yield. One recurring pay.sh subscription unlocks every prediction market, settled on Solana in milliseconds.
-            </p>
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link href="/terminal" className="inline-flex items-center gap-2 rounded-xl bg-blue-500 px-6 py-3.5 text-base font-semibold text-white shadow-glow-blue transition hover:bg-blue-600">
-                Launch Terminal
-                <Arrow />
-              </Link>
-              <a href="#how" className="liquid-glass inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-base font-semibold text-white transition hover:bg-white/5">
-                See how it works
-              </a>
-            </div>
-            <div className="mt-12 grid max-w-md grid-cols-3 gap-3">
-              {[
-                { v: "$4.2M", l: "Value locked", c: "text-white" },
-                { v: "120K", l: "Predictions", c: "text-white" },
-                { v: "412ms", l: "Median payout", c: "text-green" },
-              ].map((s) => (
-                <div key={s.l} className="liquid-glass rounded-xl px-3 py-4">
-                  <p className={"font-mono text-2xl font-bold tracking-tight " + s.c}>{s.v}</p>
-                  <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-white/45">{s.l}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+      <WorldCupHero />
 
-          {/* right: World Cup Winner odds card */}
-          <div className="liquid-glass rounded-2xl p-5 text-white shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/45">Sports · Soccer</p>
-                <p className="mt-1 text-base font-bold tracking-tight">World Cup Winner</p>
-              </div>
-              <div className="text-right">
-                <span className="rounded-md bg-white/10 px-2 py-1 font-mono text-[10px] font-bold text-white/70">$4.2M Vol</span>
-                <p className="mt-1 font-mono text-[10px] text-white/40">Jul 20, 2026</p>
-              </div>
-            </div>
-            <div className="mt-4 space-y-3.5">
-              {WINNER.map((t) => (
-                <div key={t.code} className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
-                  <div className="flex items-center gap-3">
-                  <Flag code={t.code} className="h-5 w-7" />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-white/90">{t.name}</span>
-                      <span className="flex items-center gap-1.5">
-                        <Move dir={t.move} />
-                        <span className="font-mono text-sm font-bold text-blue-400">{t.pct}%</span>
-                      </span>
-                    </div>
-                    <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/10">
-                      <div className="h-full rounded-full bg-blue-500" style={{ width: t.pct + "%" }}></div>
-                    </div>
-                  </div>
-                  </div>
-                  <div className="mt-2 grid grid-cols-2 gap-2 font-mono text-[10px] font-bold">
-                    <Link href="/terminal" className="rounded-md bg-blue-500/20 px-2 py-1.5 text-center text-blue-200 transition hover:bg-blue-500/30">Buy Yes {(t.pct + 0.4).toFixed(1)}c</Link>
-                    <Link href="/terminal" className="rounded-md bg-white/10 px-2 py-1.5 text-center text-white/70 transition hover:bg-white/15">Buy No {(100 - t.pct + 0.5).toFixed(1)}c</Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <Link href="/terminal" className="mt-5 flex items-center justify-center gap-2 rounded-xl bg-white/10 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white transition hover:bg-white/15">
-              Trade all 32 markets <Arrow className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        </div>
-
-        {/* settled ticker */}
-        <div className="relative z-10 border-y border-white/10 bg-white/[0.03] py-3 backdrop-blur-sm">
-          <div className="marquee overflow-hidden">
-            <div className="marquee-track flex w-max items-center gap-8 whitespace-nowrap px-4 font-mono text-xs text-white/60">
-              {[0, 1].map((dup) => (
-                <span key={dup} className="flex items-center gap-8" aria-hidden={dup === 1}>
-                  <span className="font-bold uppercase tracking-widest text-green">Settled</span>
-                  {SETTLED.map((s, i) => (
-                    <span key={i} className="flex items-center gap-8">
-                      <span>{s.m} <span className="text-green">{s.p}</span></span>
-                      <span className="text-white/15">|</span>
-                    </span>
-                  ))}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-6">
+      <main className="mx-auto max-w-7xl px-6">
         {/* ===== HOW IT WORKS ===== */}
         <section id="how" className="py-24">
           <Reveal className="max-w-2xl">
@@ -338,7 +179,18 @@ export default function Landing() {
                   <div key={dup} className="flex shrink-0 items-center" aria-hidden={dup === 1}>
                     {STACK.map((l) => (
                       <span key={l.name} className="group flex shrink-0 items-center gap-2.5 pr-14 text-white/45 transition-colors duration-200 hover:text-white">
-                        <svg viewBox={l.vb} className={l.w} fill={l.fill ? "currentColor" : "none"} stroke={l.fill ? "none" : "currentColor"} strokeWidth={l.fill ? undefined : 2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{l.svg}</svg>
+                        {l.src ? (
+                          <Image
+                            src={l.src}
+                            alt={l.name}
+                            width={l.w}
+                            height={l.h}
+                            className="brightness-0 invert opacity-60 transition-opacity duration-200 group-hover:opacity-100"
+                            aria-hidden="true"
+                          />
+                        ) : l.svg ? (
+                          l.svg
+                        ) : null}
                         <span className="text-lg font-semibold tracking-tight">{l.name}</span>
                       </span>
                     ))}
@@ -351,7 +203,7 @@ export default function Landing() {
         </section>
 
         {/* ===== ALPHA ===== */}
-        <section className="border-t border-ink/[0.08] py-24">
+        <section id="alpha" className="border-t border-ink/[0.08] py-24">
           <Reveal className="max-w-2xl">
             <p className="font-mono text-xs uppercase tracking-[0.25em] text-blue-500">Social alpha</p>
             <h2 className="mt-3 text-4xl font-bold tracking-tight">A competitive lobby, not a spreadsheet.</h2>

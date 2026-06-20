@@ -212,6 +212,30 @@ export function TerminalApp() {
           <aside className={"order-1 flex w-full shrink-0 flex-col gap-3 border-b border-line/10 bg-inset/60 p-4 lg:order-2 lg:w-[360px] lg:border-b-0 lg:border-l lg:overflow-y-auto " + (busy ? "pointer-events-none select-none" : "")}>
             <SubscriptionConsole status={subStatus} nextCharge={nextCharge} onSubscribe={openSubscribe}></SubscriptionConsole>
 
+            {/* Bet slip is rendered high in the sidebar so it is always visible.
+                The Alpha leaderboard, position stats, and settle button follow
+                below the slip to avoid pushing it off screen. */}
+            <BettingSlip
+              lines={slip}
+              matches={MARKETS}
+              positions={positions}
+              subscribed={subscribed}
+              busy={false}
+              totalStake={totalStake}
+              totalReturn={totalReturn}
+              balance={bal.usdg}
+              slipMode={slipMode}
+              autoStrikes={autoStrikes}
+              onSlipMode={setSlipMode}
+              onAmount={setStake}
+              onRemove={removeFromSlip}
+              onClear={clearSlip}
+              onPlace={placeBets}
+              onDeployAutoStrike={(trigger) => { setAutoTrigger(trigger); setModal("auto"); }}
+              onCancelAutoStrike={cancelAutoStrike}
+              onSharePosition={openShare}
+            ></BettingSlip>
+
             <AlphaBoard rows={ALPHA} you={youRank}></AlphaBoard>
 
             {openCount + futuresCount > 0 ? (
@@ -237,27 +261,6 @@ export function TerminalApp() {
                 Settle on final whistle (demo)
               </button>
             ) : null}
-
-            <BettingSlip
-              lines={slip}
-              matches={MARKETS}
-              positions={positions}
-              subscribed={subscribed}
-              busy={false}
-              totalStake={totalStake}
-              totalReturn={totalReturn}
-              balance={bal.usdg}
-              slipMode={slipMode}
-              autoStrikes={autoStrikes}
-              onSlipMode={setSlipMode}
-              onAmount={setStake}
-              onRemove={removeFromSlip}
-              onClear={clearSlip}
-              onPlace={placeBets}
-              onDeployAutoStrike={(trigger) => { setAutoTrigger(trigger); setModal("auto"); }}
-              onCancelAutoStrike={cancelAutoStrike}
-              onSharePosition={openShare}
-            ></BettingSlip>
           </aside>
         </div>
       )}
