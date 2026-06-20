@@ -10,8 +10,8 @@ import { LandingMark } from "./LandingMark";
 const LINKS = [
   { label: "Markets", href: "#markets" },
   { label: "How it works", href: "#how" },
-  { label: "Collectibles", href: "#alpha" },
-  { label: "Auto-Strike", href: "#pass" },
+  { label: "Collectibles", href: "#collectibles" },
+  { label: "Auto-Strike", href: "#auto-strike" },
   { label: "Pricing", href: "#pricing" },
 ];
 
