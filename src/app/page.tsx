@@ -239,6 +239,153 @@ export default function Landing() {
           </div>
         </section>
 
+        {/* ===== COLLECTIBLES ===== */}
+        <section id="collectibles" className="border-t border-ink/[0.08] py-24">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <Reveal>
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-blue-500">Digital collectibles</p>
+              <h2 className="mt-3 text-4xl font-bold tracking-tight">Every prediction is a mintable receipt.</h2>
+              <p className="mt-4 max-w-md leading-relaxed text-ink/55">When you place a prediction, it becomes a holographic Alpha Card in your collection. Share it to X or mint it as a compressed NFT on Solana - a verifiable, on-chain receipt of your alpha call.</p>
+              <ul className="mt-8 space-y-4">
+                {[
+                  ["3D holographic cards.", "Mouse-tracked tilt with a foil sheen overlay that shifts with your cursor. Premium digital trading card feel."],
+                  ["Mint as cNFT.", "One tap turns your prediction slip into a compressed NFT in your Phantom wallet via Metaplex Bubblegum."],
+                  ["Share your alpha.", "Generate a canvas card image and post it to X with a single click. Tail bait for the timeline."],
+                ].map(([h, b]) => (
+                  <li key={h} className="flex items-start gap-3">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-blue-500/15 text-blue-500"><Check /></span>
+                    <p className="text-sm leading-relaxed text-ink/75"><span className="font-semibold text-ink">{h}</span> {b}</p>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="mx-auto max-w-[280px]">
+                <div className="relative aspect-[5/7] overflow-hidden rounded-xl border border-blue-500/30 bg-card p-4 shadow-lift">
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.18),transparent_50%)]"></div>
+                  <div className="relative flex h-full flex-col">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-muted">Alpha Card</span>
+                      <span className="inline-flex items-center gap-1 rounded-md bg-green/15 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase text-green">
+                        <span className="h-1.5 w-1.5 rounded-full bg-green"></span>Success
+                      </span>
+                    </div>
+                    <div className="mt-5 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <Flag code="USA" className="h-5 w-7" />
+                        <span className="font-mono text-sm font-bold">USA</span>
+                      </div>
+                      <span className="font-mono text-[10px] uppercase text-muted">vs</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono text-sm font-bold">AUS</span>
+                        <Flag code="AUS" className="h-5 w-7" />
+                      </div>
+                    </div>
+                    <div className="mt-5 flex flex-1 flex-col items-center justify-center rounded-lg border border-ink/[0.08] bg-well p-3 text-center">
+                      <Flag code="USA" className="h-10 w-14" />
+                      <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">prediction</p>
+                      <p className="mt-1 text-base font-black tracking-tight">United States</p>
+                    </div>
+                    <div className="mt-3 grid grid-cols-3 gap-1.5 font-mono">
+                      <div className="rounded-md border border-ink/[0.08] bg-well px-2 py-1.5">
+                        <p className="text-[8px] uppercase text-muted">stake</p>
+                        <p className="text-[11px] font-bold">50</p>
+                      </div>
+                      <div className="rounded-md border border-ink/[0.08] bg-well px-2 py-1.5">
+                        <p className="text-[8px] uppercase text-muted">odds</p>
+                        <p className="text-[11px] font-bold text-blue-500">1.52x</p>
+                      </div>
+                      <div className="rounded-md border border-ink/[0.08] bg-well px-2 py-1.5">
+                        <p className="text-[8px] uppercase text-muted">payout</p>
+                        <p className="text-[11px] font-bold text-green">76</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-xs font-bold text-white shadow-glow-blue">
+                      <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0l1.6 4.4L14 6l-4.4 1.6L8 12 6.4 7.6 2 6l4.4-1.6L8 0z"></path></svg>
+                      Mint as cNFT Receipt
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p className="mt-3 text-center font-mono text-[11px] text-muted">holographic Alpha Card - tap to mint on Solana</p>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ===== AUTO-STRIKE ===== */}
+        <section id="auto-strike" className="border-t border-ink/[0.08] py-24">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <Reveal delay={0.1} className="order-2 lg:order-1">
+              <div className="mx-auto max-w-sm">
+                <div className="rounded-2xl border border-ink/[0.08] bg-card p-5 shadow-soft">
+                  <div className="grid grid-cols-2 gap-1 rounded-lg border border-ink/[0.08] bg-well p-1">
+                    <span className="rounded-md bg-well py-2 text-center text-xs font-bold text-muted">Live Market</span>
+                    <span className="rounded-md bg-purple-600 py-2 text-center text-xs font-bold text-white">Auto-Strike</span>
+                  </div>
+                  <div className="mt-4 rounded-lg border border-ink/[0.08] bg-well p-3">
+                    <div className="flex items-center justify-between text-xs font-semibold">
+                      <span>USA v AUS</span>
+                      <span className="text-muted">pick <span className="text-blue-500">USA</span> - 1.52x</span>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2 rounded-md border border-ink/[0.08] bg-card px-2.5 py-1.5">
+                      <span className="flex-1 font-mono text-sm font-bold">50.00</span>
+                      <span className="font-mono text-[10px] text-muted">USDG</span>
+                    </div>
+                  </div>
+                  <div className="mt-3 rounded-lg border border-purple-500/25 bg-purple-500/[0.04] p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold">Target Trigger</span>
+                      <div className="flex rounded-md border border-purple-500/20 bg-card p-0.5">
+                        <span className="rounded bg-purple-600 px-2 py-1 font-mono text-[10px] text-white">Odds</span>
+                        <span className="rounded px-2 py-1 font-mono text-[10px] text-muted">Kickoff</span>
+                      </div>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between font-mono text-[11px]">
+                      <span className="text-muted">Execute when odds hit</span>
+                      <span className="font-bold text-purple-500">+200</span>
+                    </div>
+                    <div className="mt-2 h-1.5 rounded-full bg-ink/10">
+                      <div className="h-full w-[40%] rounded-full bg-purple-500"></div>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_0_1px_rgba(139,92,246,0.5),0_8px_24px_rgba(139,92,246,0.35)]">
+                    <svg className="h-4 w-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="8" r="5.5"></circle><circle cx="8" cy="8" r="2"></circle><path d="M8 8 12 4"></path></svg>
+                    Deploy Auto-Strike
+                  </div>
+                  <div className="mt-3 rounded-lg border border-purple-500/25 bg-purple-500/[0.04] p-2.5">
+                    <div className="flex items-center gap-2 text-xs font-bold">
+                      <svg className="h-3.5 w-3.5 text-purple-400" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="8" r="5.5"></circle><circle cx="8" cy="8" r="2"></circle><path d="M8 8 12 4"></path></svg>
+                      Active Automations
+                      <span className="rounded bg-purple-500/20 px-1.5 py-0.5 font-mono text-[9px] text-purple-500">1</span>
+                    </div>
+                    <div className="mt-2 rounded-md border border-ink/[0.08] bg-card px-2.5 py-2">
+                      <p className="font-mono text-[11px] font-bold">USA v AUS - 50 USDG</p>
+                      <p className="mt-0.5 font-mono text-[10px] text-muted">odds hit +200 - listening for trigger...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+            <Reveal className="order-1 lg:order-2">
+              <p className="font-mono text-xs uppercase tracking-[0.25em] text-purple-500">Programmable orders</p>
+              <h2 className="mt-3 text-4xl font-bold tracking-tight">Set it. Sleep. Auto-execute.</h2>
+              <p className="mt-4 max-w-md leading-relaxed text-ink/55">World Cup games air at 3:00 AM in Malaysia. Traditional apps need you awake to trade momentum. Striker Terminal lets you program conditional orders that execute while you sleep.</p>
+              <ul className="mt-8 space-y-4">
+                {[
+                  ["Timezone arbitrage.", "Set a target: 'If USA odds hit +200, deploy 50 USDG.' Close your laptop and go to sleep."],
+                  ["Programmable money.", "Solana enables conditional execution. Your smart contract acts as an automated trading agent on your behalf."],
+                  ["Sleep mode UI.", "A dedicated purple Auto-Strike panel with trigger sliders, pending order queue, and one-tap deployment."],
+                ].map(([h, b]) => (
+                  <li key={h} className="flex items-start gap-3">
+                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-purple-500/15 text-purple-500"><Check /></span>
+                    <p className="text-sm leading-relaxed text-ink/75"><span className="font-semibold text-ink">{h}</span> {b}</p>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
+        </section>
+
         {/* ===== PRICING ===== */}
         <section id="pricing" className="border-t border-ink/[0.08] py-24">
           <Reveal className="mx-auto max-w-2xl text-center">
