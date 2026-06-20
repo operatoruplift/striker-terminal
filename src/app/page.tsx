@@ -21,9 +21,13 @@ export const metadata: Metadata = {
 const STACK: { name: string; src?: string; h: number; w: number; svg?: React.ReactNode }[] = [
   { name: "Solana", src: "/logos/solana.png", h: 20, w: 20 },
   { name: "Phantom", src: "/logos/phantom.png", h: 24, w: 24 },
-  { name: "Anchor", src: "/logos/anchor.png", h: 24, w: 24 },
+  { name: "Anchor", h: 24, w: 24, svg: (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="3" /><line x1="12" y1="8" x2="12" y2="21" /><path d="M5 12H2a10 10 0 0 0 20 0h-3" /></svg>
+  ) },
   { name: "Jupiter", src: "/logos/jupiter.svg", h: 24, w: 24 },
-  { name: "Superteam", src: "/logos/superteam.png", h: 22, w: 22 },
+  { name: "Superteam", h: 22, w: 22, svg: (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>
+  ) },
   {
     name: "pay.sh", h: 20, w: 20,
     svg: (
