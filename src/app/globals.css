@@ -387,22 +387,34 @@ body {
 }
 
 /* =============================================================================
- * Alpha Card: 3D holographic collectible (mouse-tracked tilt + foil sheen).
- * The card sets --rx/--ry (tilt) and --mx/--my (cursor) on mousemove.
+ * Alpha Card: premium 3D holographic collectible with rainbow foil.
+ * Mouse-tracked tilt (--rx/--ry) and cursor position (--mx/--my).
  * ============================================================================= */
 
 .holo-scene {
-  perspective: 900px;
+  perspective: 800px;
 }
 .holo-card {
-  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
   transform-style: preserve-3d;
-  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.25s ease;
+  transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.25s ease;
   will-change: transform;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(37, 99, 235, 0.15);
 }
 .holo-card:hover {
-  box-shadow: 0 18px 50px rgba(37, 99, 235, 0.28);
+  box-shadow:
+    0 20px 60px rgba(37, 99, 235, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(37, 99, 235, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
+/* Rainbow holographic foil overlay */
 .holo-foil {
   position: absolute;
   inset: 0;
@@ -412,20 +424,47 @@ body {
   transition: opacity 0.3s ease;
   mix-blend-mode: color-dodge;
   background:
-    radial-gradient(140px 140px at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.5), transparent 60%),
+    radial-gradient(180px 180px at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.6), transparent 55%),
     linear-gradient(
       115deg,
-      rgba(59, 130, 246, 0) 20%,
-      rgba(59, 130, 246, 0.5) 38%,
-      rgba(168, 85, 247, 0.55) 50%,
-      rgba(34, 211, 238, 0.5) 62%,
-      rgba(59, 130, 246, 0) 80%
+      rgba(255, 0, 0, 0) 0%,
+      rgba(255, 0, 0, 0.35) 12%,
+      rgba(255, 165, 0, 0.5) 20%,
+      rgba(255, 255, 0, 0.45) 28%,
+      rgba(0, 255, 0, 0.5) 36%,
+      rgba(0, 255, 255, 0.5) 44%,
+      rgba(0, 100, 255, 0.55) 52%,
+      rgba(130, 0, 255, 0.5) 60%,
+      rgba(255, 0, 200, 0.4) 68%,
+      rgba(255, 0, 0, 0.35) 76%,
+      rgba(255, 165, 0, 0.3) 84%,
+      rgba(0, 255, 0, 0) 100%
     );
-  background-size: auto, 220% 220%;
+  background-size: auto, 300% 300%;
   background-position: 0 0, var(--mx, 50%) var(--my, 50%);
 }
 .holo-card:hover .holo-foil {
-  opacity: 0.7;
+  opacity: 0.85;
+}
+/* Subtle scanline texture for premium card feel */
+.holo-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.02) 2px,
+    rgba(255, 255, 255, 0.02) 4px
+  );
+}
+.holo-card:hover::after {
+  opacity: 1;
 }
 .holo-cta {
   opacity: 0;
