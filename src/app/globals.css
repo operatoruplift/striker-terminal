@@ -476,6 +476,87 @@ body {
   transform: none;
 }
 
+/* =============================================================================
+ * Comet Card: premium collectible with rotating conic border gradient,
+ * outer glow halo, and 3D tilt. Inspired by the CometCard component.
+ * ============================================================================= */
+
+.comet-scene {
+  perspective: 800px;
+}
+.comet-card {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  position: relative;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transform-style: preserve-3d;
+  transition: transform 0.15s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s ease;
+  will-change: transform;
+  isolation: isolate;
+}
+/* Rotating conic-gradient border */
+.comet-border {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--comet-angle, 0deg),
+    rgba(37, 99, 235, 0.1),
+    rgba(59, 130, 246, 0.6),
+    rgba(139, 92, 246, 0.5),
+    rgba(236, 72, 153, 0.4),
+    rgba(34, 211, 238, 0.5),
+    rgba(16, 185, 129, 0.4),
+    rgba(59, 130, 246, 0.6),
+    rgba(37, 99, 235, 0.1)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: cometSpin 4s linear infinite;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+.comet-card:hover .comet-border {
+  opacity: 1;
+}
+@keyframes cometSpin {
+  to { --comet-angle: 360deg; }
+}
+@property --comet-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+/* Outer glow halo */
+.comet-glow {
+  position: absolute;
+  inset: -8px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    ellipse at var(--mx, 50%) var(--my, 50%),
+    rgba(59, 130, 246, 0.25),
+    transparent 60%
+  );
+  filter: blur(16px);
+}
+.comet-card:hover .comet-glow {
+  opacity: 1;
+}
+.comet-card:hover {
+  box-shadow:
+    0 24px 64px rgba(37, 99, 235, 0.25),
+    0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
 /* Auto-Strike (Sleep Mode): pulsing neon-purple deploy button. */
 @keyframes autoPulse {
   0%, 100% {
@@ -490,8 +571,12 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .holo-card {
+  .holo-card,
+  .comet-card {
     transition: none;
+  }
+  .comet-border {
+    animation: none;
   }
   .auto-strike-btn {
     animation: none;
