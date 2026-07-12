@@ -583,3 +583,38 @@ body {
   }
 }
 
+
+/* =============================================================================
+ * CometCard (landing): cursor-tracked 3D tilt wrapper with a following glare.
+ * Driven by CSS variables set from src/components/ui/comet-card.tsx; the
+ * transition lag gives the spring feel without a motion library.
+ * ============================================================================= */
+
+.comet-tilt {
+  transform: translate3d(var(--cc-tx, 0px), var(--cc-ty, 0px), 0)
+    rotateX(var(--cc-rx, 0deg)) rotateY(var(--cc-ry, 0deg)) scale(var(--cc-s, 1));
+  transition: transform 0.18s cubic-bezier(0.2, 0.7, 0.3, 1);
+  will-change: transform;
+}
+.comet-tilt:hover {
+  --cc-s: 1.05;
+}
+.comet-glare {
+  opacity: var(--cc-glare, 0);
+  background: radial-gradient(
+    circle at var(--cc-gx, 50%) var(--cc-gy, 50%),
+    rgba(255, 255, 255, 0.85) 8%,
+    rgba(255, 255, 255, 0) 65%
+  );
+  transition: opacity 0.25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comet-tilt {
+    transition: none;
+    transform: none;
+  }
+  .comet-glare {
+    display: none;
+  }
+}

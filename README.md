@@ -44,6 +44,7 @@ Striker Terminal bridges this gap by leveraging the speed, ultra-low fees, and p
 * **Smart Contract Layer:** Anchor Rust Program (stub deployed)
 * **Payment Infrastructure:** pay.sh SDK recurring subscription protocol
 * **Asset Minting:** Metaplex Bubblegum Protocol (scaffolded seams)
+* **Odds Oracle:** TXODDS txline (on-chain TXL subscription + token-gated World Cup odds API)
 
 ---
 
@@ -88,7 +89,181 @@ NEXT_PUBLIC_SOLANA_CLUSTER=devnet
 NEXT_PUBLIC_RPC_ENDPOINT=https://api.devnet.solana.com
 NEXT_PUBLIC_PAY_SH_CLIENT_ID=YOUR_PAY_SH_CLIENT_IDENTIFIER
 NEXT_PUBLIC_USDG_MINT_ADDRESS=YOUR_DEVNET_TOKEN_MINT_ADDRESS
+
+# TXODDS txline odds oracle (server-side only, never commit the real token).
+# Obtained via the on-chain subscribe + activate flow documented below.
+TXLINE_API_TOKEN=YOUR_ACTIVATED_TXLINE_API_TOKEN
 ```
+
+---
+
+## Live Odds Oracle: TXODDS txline
+
+Striker Terminal sources professional World Cup odds and fixture data from the TXODDS txline oracle. Access is token-gated on Solana: you subscribe on-chain with TXL tokens, sign an activation message with your wallet, and receive an API token for the txline REST/stream endpoints.
+
+* Quickstart docs: [txline-docs.txodds.com/documentation/quickstart](https://txline-docs.txodds.com/documentation/quickstart)
+* World Cup data docs: [txline-docs.txodds.com/documentation/worldcup](https://txline-docs.txodds.com/documentation/worldcup)
+
+### 1. Install the oracle client dependencies
+
+```bash
+npm install @coral-xyz/anchor @solana/web3.js @solana/spl-token axios tweetnacl
+```
+
+### 2. Subscribe on-chain and activate your API token
+
+Download the matching `txoracle.json` IDL and `Txoracle` types for your network from the txline docs, then run the flow below with your Anchor wallet. Free tier: `SERVICE_LEVEL_ID = 1` is real-time on devnet (60 second sampling on mainnet); `SERVICE_LEVEL_ID = 12` is the mainnet real-time World Cup and International Friendlies bundle.
+
+```ts
+import * as anchor from "@coral-xyz/anchor";
+import type { Txoracle } from "./types/txoracle"; // Use the matching mainnet/devnet type
+import txoracleIdl from "./idl/txoracle.json"; // Use the matching mainnet/devnet IDL
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  TOKEN_2022_PROGRAM_ID,
+  getAssociatedTokenAddressSync,
+} from "@solana/spl-token";
+import { Connection, PublicKey, SystemProgram } from "@solana/web3.js";
+import axios from "axios";
+import nacl from "tweetnacl";
+
+const NETWORK: "mainnet" | "devnet" = "devnet";
+
+const CONFIG = {
+  mainnet: {
+    rpcUrl: "https://api.mainnet-beta.solana.com",
+    apiOrigin: "https://txline.txodds.com",
+    programId: new PublicKey("9ExbZjAapQww1vfcisDmrngPinHTEfpjYRWMunJgcKaA"),
+    txlTokenMint: new PublicKey("Zhw9TVKp68a1QrftncMSd6ELXKDtpVMNuMGr1jNwdeL"),
+  },
+  devnet: {
+    rpcUrl: "https://api.devnet.solana.com",
+    apiOrigin: "https://txline-dev.txodds.com",
+    programId: new PublicKey("6pW64gN1s2uqjHkn1unFeEjAwJkPGHoppGvS715wyP2J"),
+    txlTokenMint: new PublicKey("4Zao8ocPhmMgq7PdsYWyxvqySMGx7xb9cMftPMkEokRG"),
+  },
+} as const;
+
+const { rpcUrl, apiOrigin, programId, txlTokenMint } = CONFIG[NETWORK];
+const apiBaseUrl = `${apiOrigin}/api`;
+
+// `wallet` is your Anchor wallet (adapter or local keypair wallet).
+const connection = new Connection(rpcUrl, "confirmed");
+const provider = new anchor.AnchorProvider(connection, wallet, {
+  commitment: "confirmed",
+});
+anchor.setProvider(provider);
+
+const program = new anchor.Program<Txoracle>(
+  txoracleIdl as Txoracle,
+  provider
+);
+
+if (!program.programId.equals(programId)) {
+  throw new Error(
+    `Loaded IDL program ${program.programId.toBase58()} does not match ${NETWORK} program ${programId.toBase58()}`
+  );
+}
+
+// Free tier configuration - choose one:
+const SERVICE_LEVEL_ID = 1;  // Devnet: samplingIntervalSec = 0; mainnet: 60 seconds
+// const SERVICE_LEVEL_ID = 12; // Mainnet real-time World Cup & Int Friendlies
+const DURATION_WEEKS = 4; // Subscribe for 4 weeks at a time
+const SELECTED_LEAGUES: number[] = []; // Empty for standard bundle
+
+const [tokenTreasuryPda] = PublicKey.findProgramAddressSync(
+  [Buffer.from("token_treasury_v2")],
+  program.programId
+);
+
+const tokenTreasuryVault = getAssociatedTokenAddressSync(
+  txlTokenMint,
+  tokenTreasuryPda,
+  true,
+  TOKEN_2022_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID
+);
+
+const [pricingMatrixPda] = PublicKey.findProgramAddressSync(
+  [Buffer.from("pricing_matrix")],
+  program.programId
+);
+
+const userTokenAccount = getAssociatedTokenAddressSync(
+  txlTokenMint,
+  provider.wallet.publicKey,
+  false,
+  TOKEN_2022_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID
+);
+
+// Subscribe on-chain
+const txSig = await program.methods
+  .subscribe(SERVICE_LEVEL_ID, DURATION_WEEKS)
+  .accounts({
+    user: provider.wallet.publicKey,
+    pricingMatrix: pricingMatrixPda,
+    tokenMint: txlTokenMint,
+    userTokenAccount,
+    tokenTreasuryVault,
+    tokenTreasuryPda,
+    tokenProgram: TOKEN_2022_PROGRAM_ID,
+    associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+    systemProgram: SystemProgram.programId,
+  })
+  .rpc();
+
+console.log("Subscription transaction:", txSig);
+
+// Get guest authentication token
+const authResponse = await axios.post(`${apiOrigin}/auth/guest/start`);
+const jwt = authResponse.data.token;
+
+// Create message to sign
+const messageString = `${txSig}:${SELECTED_LEAGUES.join(",")}:${jwt}`;
+const message = new TextEncoder().encode(messageString);
+
+// For SELECTED_LEAGUES = [], this signs `${txSig}::${jwt}`.
+async function signActivationMessage(message: Uint8Array): Promise<Uint8Array> {
+  if ("signMessage" in wallet && wallet.signMessage) {
+    return wallet.signMessage(message);
+  }
+
+  const localPayer = (provider.wallet as anchor.Wallet & {
+    payer?: anchor.web3.Keypair;
+  }).payer;
+
+  if (localPayer) {
+    return nacl.sign.detached(message, localPayer.secretKey);
+  }
+
+  throw new Error("Wallet must support signMessage, or run with a local Anchor payer.");
+}
+
+const signatureBytes = await signActivationMessage(message);
+const walletSignature = Buffer.from(signatureBytes).toString("base64");
+
+// Activate your API access
+const activationResponse = await axios.post(
+  `${apiBaseUrl}/token/activate`,
+  {
+    txSig,
+    walletSignature,
+    leagues: SELECTED_LEAGUES,
+  },
+  {
+    headers: { Authorization: `Bearer ${jwt}` }
+  }
+);
+
+// Save your API token
+const apiToken = activationResponse.data.token || activationResponse.data;
+console.log("API Token activated successfully!");
+```
+
+### 3. Wire the token into Striker Terminal
+
+Store the activated token in `.env.local` as `TXLINE_API_TOKEN` (server-side only; do not prefix it with `NEXT_PUBLIC_` and never commit it). The market feed boundary at `src/lib/data/live.ts` and the oracle settlement seam in the terminal store are the two drop-in points for the txline World Cup endpoints documented at [txline-docs.txodds.com/documentation/worldcup](https://txline-docs.txodds.com/documentation/worldcup).
 
 ---
 
