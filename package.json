@@ -1,7 +1,14 @@
 {
   "name": "striker-terminal-superteam-kracked-devs-hackkathon-wc26",
+  "license": "MIT",
   "version": "0.1.0",
   "private": true,
+  "description": "A World Cup prediction terminal with programmable orders and collectible prediction receipts. Hackathon build, runs in demo mode by default.",
+  "homepage": "https://strikerterminal.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/operatoruplift/striker-terminal.git"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
