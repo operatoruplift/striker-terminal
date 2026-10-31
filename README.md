@@ -15,6 +15,7 @@
 <img src="https://img.shields.io/badge/Next.js-16-2563EB?style=flat-square&logo=nextdotjs&logoColor=white&labelColor=0B1020" alt="Next.js 16">
 <img src="https://img.shields.io/badge/wallet-Phantom_on_devnet-9945FF?style=flat-square&logo=solana&logoColor=white&labelColor=0B1020" alt="Wallet: Phantom on Solana devnet">
 <img src="https://img.shields.io/badge/runs_in-demo_mode_by_default-6574A4?style=flat-square&labelColor=0B1020" alt="Runs in demo mode by default">
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6F6163?style=flat-square&labelColor=0B1020" alt="License: MIT"></a>
 
 <h3>Trade the World Cup. One weekly pass. Every market.</h3>
 
@@ -195,6 +196,6 @@ The terminal's view toggle switches between **Daily Matches** and **Futures Brac
 
 <br>
 
-<p align="center"><sub>No license file has been added to this repository yet. The Solana, Phantom, Jupiter, Anchor and Superteam marks in <code>public/logos</code> belong to their owners.</sub></p>
+<p align="center"><sub>The code is MIT licensed (see <a href="LICENSE">LICENSE</a>). The Solana, Phantom, Jupiter, Anchor and Superteam marks in <code>public/logos</code> belong to their owners.</sub></p>
 
 <p align="center"><sub>Built by <a href="https://rvaclassic.xyz">Matt Sim</a>, founder of <a href="https://operatoruplift.com">Operator Uplift</a>. More builds at <a href="https://github.com/operatoruplift">github.com/operatoruplift</a>. Want one built for your product? <a href="https://cal.com/rvaclassic/15min">Book a 15-minute call</a>.</sub></p>
