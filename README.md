@@ -76,6 +76,8 @@ Everything below was merged to `main` on 20 June 2026, four days after the repos
   </tr>
 </table>
 
+After the hackathon, two commits written on 11 and 12 July 2026 and merged on 4 November added an interactive landing card (the Alpha Card tilts toward the cursor, catches a glare and opens the terminal), a rotating gradient border on the cards in **My Collection**, the worldcup26.ir fixtures feed for live mode (see [Status](#status)) and the [txline oracle notes](docs/txline-oracle.md).
+
 <br>
 
 ## Status
@@ -88,17 +90,17 @@ Everything below was merged to `main` on 20 June 2026, four days after the repos
   </tr>
   <tr valign="top">
     <td align="center"><img src="https://img.shields.io/badge/LIVE-34d399?style=for-the-badge" alt="Live"></td>
-    <td>The demo at <a href="https://strikerterminal.vercel.app">strikerterminal.vercel.app</a>. Vercel's production deployment is built from <code>main</code> (commit <code>32f839b</code>, redeployed 12 July 2026, ready when checked on 30 October 2026) and does not set <code>NEXT_PUBLIC_USE_MOCKS</code>, so it runs in demo mode with no real transactions.</td>
+    <td>The demo at <a href="https://strikerterminal.vercel.app">strikerterminal.vercel.app</a>. Vercel builds production from <code>main</code> and does not set <code>NEXT_PUBLIC_USE_MOCKS</code>, so the site runs in demo mode with no real transactions.</td>
     <td><a href="https://strikerterminal.vercel.app/terminal">Open the terminal</a></td>
   </tr>
   <tr valign="top">
     <td align="center"><img src="https://img.shields.io/badge/PROTOTYPE-6574A4?style=for-the-badge" alt="Prototype"></td>
-    <td>Live mode on Solana devnet: Phantom connects, the SOL balance is read from the cluster, and the Season Pass authorization sends a real signed transaction (a zero-lamport self-transfer standing in for the pay.sh stream). Markets show the RPC error view because no program is deployed, so the other flows have nothing to act on yet. Not exercised for this README.</td>
+    <td>Live mode on Solana devnet: Phantom connects, the SOL balance is read from the cluster, and the Season Pass authorization sends a real signed transaction (a zero-lamport self-transfer standing in for the pay.sh stream). The match feed still shows the RPC error view: the store loads markets, results, bracket and leaderboard together, and the bracket read always fails until the futures program is wired. Markets and results now read fixtures and scores from the free worldcup26.ir API, with placeholder odds, volume and liquidity computed from each match's id and score, but that API moved to version 2.0.0 and both routes the feed calls answered 404 on 4 November 2026. Checked against the code and the API; not run with a wallet for this README.</td>
     <td><a href="src/lib/solana/tx.ts">Transaction pipeline</a></td>
   </tr>
   <tr valign="top">
     <td align="center"><img src="https://img.shields.io/badge/PLANNED-6F6163?style=for-the-badge" alt="Planned"></td>
-    <td>The Anchor prediction and futures programs, the pay.sh stream SDK, the Bubblegum cNFT mint, an Auto-Strike keeper and oracle settlement. Each has a seam in the code; none is deployed or wired.</td>
+    <td>The Anchor prediction and futures programs, the pay.sh stream SDK, the Bubblegum cNFT mint, an Auto-Strike keeper and oracle settlement. Each has a seam in the code; none is deployed or wired. Real odds would come from the TXODDS txline oracle: the subscription and activation steps are in <a href="docs/txline-oracle.md">docs/txline-oracle.md</a>, and nothing calls it yet.</td>
     <td><a href="src/lib">Integration seams</a></td>
   </tr>
 </table>
@@ -145,11 +147,11 @@ Every variable is optional, and each line in `.env.example` stays commented out 
 
 | Variable | When unset | Effect when set |
 |---|---|---|
-| `NEXT_PUBLIC_USE_MOCKS` | Demo mode | `false` uses a real Phantom wallet and devnet transactions. Market reads then fail cleanly into the RPC error view, since no program is deployed. |
+| `NEXT_PUBLIC_USE_MOCKS` | Demo mode | `false` uses a real Phantom wallet and devnet transactions. The match feed then fails cleanly into the RPC error view, since the futures bracket read is not wired. |
 | `NEXT_PUBLIC_RPC_ENDPOINT` | Solana devnet (`clusterApiUrl("devnet")`) | RPC for the wallet connection, balances and transactions. |
 | `NEXT_PUBLIC_USDG_MINT` | A mocked 250 USDG balance | The USDG balance is read from the wallet's associated token account (6 decimals assumed). |
-| `NEXT_PUBLIC_PREDICTION_PROGRAM_ID` | Live mode cannot load markets | Program id for the daily markets. The account reads still need an IDL wired in `src/lib/data/index.ts`. |
-| `NEXT_PUBLIC_FUTURES_PROGRAM_ID` | Live mode cannot load the bracket | Program id for the futures bracket, with the same IDL step. |
+| `NEXT_PUBLIC_PREDICTION_PROGRAM_ID` | No effect | Nothing reads it yet: it is kept for the prediction program, and live market reads come from the worldcup26.ir feed in `src/lib/data/live.ts`. |
+| `NEXT_PUBLIC_FUTURES_PROGRAM_ID` | The bracket read fails | Program id for the futures bracket. The read still needs an IDL wired in `src/lib/data/index.ts`, so live mode shows the RPC error view either way. |
 | `NEXT_PUBLIC_PAYSH_DELEGATE` | `paysh...9fKw` is displayed | The pay.sh delegate shown in the Season Pass authorization. |
 
 <details>
@@ -175,9 +177,11 @@ The terminal's view toggle switches between **Daily Matches** and **Futures Brac
 | `src/app-shell/` | The terminal's client entry: connection, Phantom adapter and store providers, loaded with `ssr: false` |
 | `src/components/landing/` | Landing page pieces: background video, navigation, hero and scroll reveals |
 | `src/components/terminal/` | The terminal view: header, market cards, slip, modals, bracket, match-cast, trollbox and share cards |
+| `src/components/ui/` | `CometCard`, the cursor-tracked tilt wrapper around the landing page's Alpha Card |
 | `src/store/TerminalStore.tsx` | The single state layer and every user action |
-| `src/lib/` | Config and the demo or live switch, the data layer, and the Solana, Anchor, pay.sh, Bubblegum and chat seams |
+| `src/lib/` | Config and the demo or live switch, the data layer (mock data and the worldcup26.ir feed), and the Solana, Anchor, pay.sh, Bubblegum and chat seams |
 | `public/logos/` | The Striker logo and the partner marks used in the logo bar |
+| `docs/` | The README images and the [txline oracle notes](docs/txline-oracle.md) |
 
 </details>
 

@@ -6,6 +6,7 @@ import { Reveal } from "../components/landing/Reveal";
 import { WorldCupHero } from "../components/landing/WorldCupHero";
 import { LandingMark } from "../components/landing/LandingMark";
 import { Flag } from "../components/terminal/flags";
+import { CometCard } from "@/components/ui/comet-card";
 
 export const metadata: Metadata = {
   title: "Striker Terminal - Trade the World Cup",
@@ -264,54 +265,65 @@ export default function Landing() {
               </ul>
             </Reveal>
             <Reveal delay={0.1}>
-              <div className="mx-auto max-w-[280px]">
-                <div className="relative aspect-[5/7] overflow-hidden rounded-xl border border-blue-500/30 bg-card p-4 shadow-lift">
-                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.18),transparent_50%)]"></div>
-                  <div className="relative flex h-full flex-col">
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-muted">Alpha Card</span>
-                      <span className="inline-flex items-center gap-1 rounded-md bg-green/15 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase text-green">
-                        <span className="h-1.5 w-1.5 rounded-full bg-green"></span>Success
-                      </span>
-                    </div>
-                    <div className="mt-5 flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <Flag code="USA" className="h-5 w-7" />
-                        <span className="font-mono text-sm font-bold">USA</span>
+              <CometCard className="mx-auto w-full max-w-[300px]">
+                <Link
+                  href="/terminal"
+                  aria-label="Open the terminal to mint your own Alpha Card"
+                  className="flex w-full cursor-pointer flex-col items-stretch rounded-[16px] border-0 bg-[#1F2121] p-2 shadow-2xl md:p-3"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  <div className="relative aspect-[5/7] w-full overflow-hidden rounded-[12px] border border-blue-500/30 bg-card p-4">
+                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.18),transparent_50%)]"></div>
+                    <div className="relative flex h-full flex-col">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-muted">Alpha Card</span>
+                        <span className="inline-flex items-center gap-1 rounded-md bg-green/15 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase text-green">
+                          <span className="h-1.5 w-1.5 rounded-full bg-green"></span>Success
+                        </span>
                       </div>
-                      <span className="font-mono text-[10px] uppercase text-muted">vs</span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-mono text-sm font-bold">AUS</span>
-                        <Flag code="AUS" className="h-5 w-7" />
+                      <div className="mt-5 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <Flag code="USA" className="h-5 w-7" />
+                          <span className="font-mono text-sm font-bold text-ink">USA</span>
+                        </div>
+                        <span className="font-mono text-[10px] uppercase text-muted">vs</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-mono text-sm font-bold text-ink">AUS</span>
+                          <Flag code="AUS" className="h-5 w-7" />
+                        </div>
                       </div>
-                    </div>
-                    <div className="mt-5 flex flex-1 flex-col items-center justify-center rounded-lg border border-ink/[0.08] bg-well p-3 text-center">
-                      <Flag code="USA" className="h-10 w-14" />
-                      <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">prediction</p>
-                      <p className="mt-1 text-base font-black tracking-tight">United States</p>
-                    </div>
-                    <div className="mt-3 grid grid-cols-3 gap-1.5 font-mono">
-                      <div className="rounded-md border border-ink/[0.08] bg-well px-2 py-1.5">
-                        <p className="text-[8px] uppercase text-muted">stake</p>
-                        <p className="text-[11px] font-bold">50</p>
+                      <div className="mt-5 flex flex-1 flex-col items-center justify-center rounded-lg border border-ink/[0.08] bg-well p-3 text-center">
+                        <Flag code="USA" className="h-10 w-14" />
+                        <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">prediction</p>
+                        <p className="mt-1 text-base font-black tracking-tight text-ink">United States</p>
                       </div>
-                      <div className="rounded-md border border-ink/[0.08] bg-well px-2 py-1.5">
-                        <p className="text-[8px] uppercase text-muted">odds</p>
-                        <p className="text-[11px] font-bold text-blue-500">1.52x</p>
+                      <div className="mt-3 grid grid-cols-3 gap-1.5 font-mono">
+                        <div className="rounded-md border border-ink/[0.08] bg-well px-2 py-1.5">
+                          <p className="text-[8px] uppercase text-muted">stake</p>
+                          <p className="text-[11px] font-bold text-ink">50</p>
+                        </div>
+                        <div className="rounded-md border border-ink/[0.08] bg-well px-2 py-1.5">
+                          <p className="text-[8px] uppercase text-muted">odds</p>
+                          <p className="text-[11px] font-bold text-blue-500">1.52x</p>
+                        </div>
+                        <div className="rounded-md border border-ink/[0.08] bg-well px-2 py-1.5">
+                          <p className="text-[8px] uppercase text-muted">payout</p>
+                          <p className="text-[11px] font-bold text-green">76</p>
+                        </div>
                       </div>
-                      <div className="rounded-md border border-ink/[0.08] bg-well px-2 py-1.5">
-                        <p className="text-[8px] uppercase text-muted">payout</p>
-                        <p className="text-[11px] font-bold text-green">76</p>
+                      <div className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-xs font-bold text-white shadow-glow-blue">
+                        <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0l1.6 4.4L14 6l-4.4 1.6L8 12 6.4 7.6 2 6l4.4-1.6L8 0z"></path></svg>
+                        Mint as cNFT Receipt
                       </div>
-                    </div>
-                    <div className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-xs font-bold text-white shadow-glow-blue">
-                      <svg className="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0l1.6 4.4L14 6l-4.4 1.6L8 12 6.4 7.6 2 6l4.4-1.6L8 0z"></path></svg>
-                      Mint as cNFT Receipt
                     </div>
                   </div>
-                </div>
-              </div>
-              <p className="mt-3 text-center font-mono text-[11px] text-muted">holographic Alpha Card - tap to mint on Solana</p>
+                  <div className="flex flex-shrink-0 items-center justify-between p-3 font-mono text-white">
+                    <div className="text-xs">Striker Alpha Card</div>
+                    <div className="text-xs text-gray-300 opacity-50">#WC26</div>
+                  </div>
+                </Link>
+              </CometCard>
+              <p className="mt-3 text-center font-mono text-[11px] text-muted">hover to inspect - tap to mint on Solana</p>
             </Reveal>
           </div>
         </section>

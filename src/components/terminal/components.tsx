@@ -500,8 +500,8 @@ function CollectiblePredictionCard({ position, match, onShare }: CollectiblePred
     const rect = el.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * 100;
     const y = ((event.clientY - rect.top) / rect.height) * 100;
-    const ry = ((x - 50) / 50) * 8;
-    const rx = ((50 - y) / 50) * 8;
+    const ry = ((x - 50) / 50) * 12;
+    const rx = ((50 - y) / 50) * 12;
     el.style.setProperty("--mx", x.toFixed(2) + "%");
     el.style.setProperty("--my", y.toFixed(2) + "%");
     el.style.setProperty("--rx", rx.toFixed(2) + "deg");
@@ -515,14 +515,16 @@ function CollectiblePredictionCard({ position, match, onShare }: CollectiblePred
     el.style.setProperty("--my", "50%");
   };
   return (
-    <div className="holo-scene">
+    <div className="comet-scene">
       <div
         onPointerMove={onMove}
         onPointerLeave={onLeave}
-        className="holo-card relative aspect-[5/7] overflow-hidden rounded-xl border border-blue-500/30 bg-surface p-3 shadow-card"
+        className="comet-card relative aspect-[5/7] overflow-hidden rounded-2xl bg-surface p-3"
       >
+        <div className="comet-border"></div>
+        <div className="comet-glow"></div>
         <div className="holo-foil"></div>
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.24),transparent_42%),linear-gradient(180deg,rgba(255,255,255,0.08),transparent_28%)]"></div>
+        <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_50%_0%,rgba(37,99,235,0.28),transparent_50%)]"></div>
         <div className="relative flex h-full flex-col">
           <div className="flex items-center justify-between">
             <span className="font-mono text-[9px] font-bold uppercase tracking-[0.18em] text-muted">Alpha Card</span>
@@ -530,7 +532,7 @@ function CollectiblePredictionCard({ position, match, onShare }: CollectiblePred
               <span className={"h-1.5 w-1.5 rounded-full " + (status === "Success" ? "bg-green" : status === "Active" ? "animate-pulse bg-blue-500" : "bg-muted")}></span>{status}
             </span>
           </div>
-          <div className="mt-5 flex items-center justify-between">
+          <div className="mt-4 flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <Flag code={match.home.code} className="h-6 w-9"></Flag>
               <span className="font-mono text-sm font-bold">{match.home.code}</span>
@@ -541,28 +543,28 @@ function CollectiblePredictionCard({ position, match, onShare }: CollectiblePred
               <Flag code={match.away.code} className="h-6 w-9"></Flag>
             </div>
           </div>
-          <div className="mt-5 flex flex-1 flex-col justify-center rounded-lg border border-line/10 bg-inset/70 p-3 text-center">
-            {side ? <Flag code={side.code} className="mx-auto h-12 w-16"></Flag> : <span className="mx-auto flex h-12 w-16 items-center justify-center rounded-lg border border-line/10 font-mono text-xs text-muted">DRAW</span>}
-            <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">prediction</p>
+          <div className="mt-4 flex flex-1 flex-col justify-center rounded-xl border border-line/10 bg-inset/70 p-3 text-center">
+            {side ? <Flag code={side.code} className="mx-auto h-12 w-16"></Flag> : <span className="mx-auto flex h-12 w-16 items-center justify-center rounded-xl border border-line/10 font-mono text-xs text-muted">DRAW</span>}
+            <p className="mt-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted">prediction</p>
             <p className="mt-1 text-lg font-black tracking-tight">{side ? side.name : "Match Draw"}</p>
           </div>
           <div className="mt-3 grid grid-cols-3 gap-1.5 font-mono">
-            <div className="rounded-md border border-line/10 bg-inset px-2 py-1.5">
+            <div className="rounded-lg border border-line/10 bg-inset px-2 py-1.5">
               <p className="text-[8px] uppercase text-muted">stake</p>
               <p className="text-[11px] font-bold">{position.amount.toFixed(0)}</p>
             </div>
-            <div className="rounded-md border border-line/10 bg-inset px-2 py-1.5">
+            <div className="rounded-lg border border-line/10 bg-inset px-2 py-1.5">
               <p className="text-[8px] uppercase text-muted">odds</p>
               <p className="text-[11px] font-bold text-accent">{position.odds.toFixed(2)}x</p>
             </div>
-            <div className="rounded-md border border-line/10 bg-inset px-2 py-1.5">
+            <div className="rounded-lg border border-line/10 bg-inset px-2 py-1.5">
               <p className="text-[8px] uppercase text-muted">payout</p>
               <p className="text-[11px] font-bold text-green">{potential.toFixed(0)}</p>
             </div>
           </div>
           <button
             onClick={onShare}
-            className="holo-cta relative mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-xs font-bold text-white shadow-glow-blue transition hover:bg-blue-400"
+            className="mt-3 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-blue-500 px-3 py-2 text-xs font-bold text-white shadow-glow-blue transition hover:bg-blue-400 active:scale-[0.97]"
           >
             <IconShare className="h-3.5 w-3.5"></IconShare>Share Alpha
           </button>
@@ -657,7 +659,7 @@ function BettingSlip({
     })
     .filter((item): item is { match: MatchData; position: BetPosition } => item !== null);
   return (
-    <div className="flex min-h-[260px] flex-1 flex-col rounded-xl border border-line/10 bg-surface shadow-card lg:min-h-0">
+    <div className="flex flex-col rounded-xl border border-line/10 bg-surface shadow-card">
       <div className="flex items-center justify-between border-b border-line/10 px-4 py-3">
         <div className="flex items-center gap-2">
           <button onClick={() => setPanel("slip")} className={"rounded-md px-2 py-1 text-xs font-bold transition " + (panel === "slip" ? "bg-blue-500 text-white" : "text-muted hover:text-fg")}>Bet Slip</button>
@@ -671,9 +673,9 @@ function BettingSlip({
       </div>
 
       {panel === "collection" ? (
-        <div className="flex-1 space-y-3 p-3 lg:min-h-0 lg:overflow-y-auto">
+        <div className="space-y-3 p-3">
           {collection.length === 0 ? (
-            <div className="flex h-full min-h-[180px] flex-col items-center justify-center px-4 text-center">
+            <div className="flex min-h-[180px] flex-col items-center justify-center px-4 text-center">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-line/10 bg-inset font-mono text-muted">NFT</div>
               <p className="mt-3 text-xs font-medium text-fg/65">No prediction cards yet</p>
               <p className="mt-1 font-mono text-[10px] text-muted">Open a position to generate a collectible Alpha Card</p>
@@ -706,9 +708,9 @@ function BettingSlip({
               ))}
             </div>
           </div>
-          <div className="flex-1 space-y-2 p-3 lg:min-h-0 lg:overflow-y-auto">
+          <div className="space-y-2 p-3">
             {empty ? (
-              <div className="flex h-full min-h-[150px] flex-col items-center justify-center px-4 text-center">
+              <div className="flex min-h-[150px] flex-col items-center justify-center px-4 text-center">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-line/10 bg-inset font-mono text-muted">+</div>
                 <p className="mt-3 text-xs font-medium text-fg/65">{subscribed ? "Slip is empty" : "Markets locked"}</p>
                 <p className="mt-1 font-mono text-[10px] text-muted">{subscribed ? "Tap an outcome to add a selection" : "Activate the Season Pass above to begin"}</p>
